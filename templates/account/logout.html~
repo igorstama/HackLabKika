@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+<!--  	<meta http-equiv="REFRESH" content="5;url=/" /> -->
+	<script type='text/javascript' src='/site-media/js/redirect.js'></script>
+{% endblock %}
+
+
+
+{% block page_title %}Одјава{% endblock %}
+
+{% block main_content %}
+<div id="st">
+<h2>Одјава</h2>
+<p><a href="/">rakotvorbi.com</a> успешно ве одјави.</p>
+<p>Почетната страна ќе се отвори за <b id="secs">5</b> секунди.</p>
+</div>
+{% endblock %}

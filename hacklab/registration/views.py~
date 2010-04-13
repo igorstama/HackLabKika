@@ -1,0 +1,42 @@
+from django.conf import settings
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+
+from rakotvorbi.registration.models import RegistrationProfile
+from rakotvorbi.registration.forms import RegistrationForm
+
+
+
+def activate(request, activation_key):
+	"""
+	Activates a user's account, if their key is valid and hasn't
+	expired.
+
+	"""
+	activation_key = activation_key.lower() # Normalize before trying anything with it.
+	account = RegistrationProfile.objects.activate_user(activation_key)
+	return render_to_response('registration/activate.html',
+							  {'account': account,
+								'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS },
+							  context_instance=RequestContext(request))
+
+
+def register(request, success_url='/registration/success/'):
+	"""
+	Allows a new user to register an account.
+
+	"""
+	if request.method == 'POST':
+		form = RegistrationForm(request.POST)
+		if form.is_valid():
+			new_user = RegistrationProfile.objects.create_inactive_user(username=form.cleaned_data['username'],
+																		password=form.cleaned_data['password1'],
+																		email=form.cleaned_data['email'])
+			return HttpResponseRedirect(success_url)
+	else:
+		form = RegistrationForm()
+	return render_to_response('registration/registration_form.html',
+							  { 'form': form },
+							  context_instance=RequestContext(request))
+

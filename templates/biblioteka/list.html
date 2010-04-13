@@ -1,0 +1,40 @@
+{% extends 'biblioteka/base.html' %}
+
+{% block title %}Производи{% endblock %}
+{% block extrahead %}
+	<script type="text/javascript" src="/site-media/js/close_win.js"></script>
+{% endblock %}
+
+
+{% block main_content %}
+	<h2>{{ heading }}</h2>
+	<div class="lista">
+	<table>
+	<thead>
+	<tr><th>Наслов</th><th>Година</th><th>Автори</th><th>&nbsp;</th></tr>
+	</thead>
+	<tbody>
+	{% for kniga in knigi %}
+		<tr>
+		<td class="title"><a href="/biblioteka/kniga/{{ kniga.id }}/" title="детали за книгата">{{ kniga.title }}</a></td>
+		<td><a href="/biblioteka/godina/{{ kniga.release_year }}/" title="година на издавање">{{ kniga.release_year }}</a></td>
+		<td>
+		{% for author in kniga.authors.all %}
+			<a href="/biblioteka/avtor/{{ author.id }}/" title="класа">{{ author }}</a>
+		{% endfor %}
+		</td>
+		<td>
+		<!--<form method="post" action=".">
+			<input type="image" name="apply" value="{{ item.product.id }}" src="/site-media/img/apply.png" />
+		</form>-->
+		</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+	</table>
+	</div>
+	<!--<div class="cart_details">
+		<p>Имате <b>{{ item_count }}</b> книги во вашата кошничка.</p>
+		<a href="/cart/submit/">Испратете ја нарачката</a>
+	</div>-->
+{% endblock %}

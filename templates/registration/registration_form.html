@@ -1,0 +1,51 @@
+{% extends "account/base.html" %}
+
+{% block page_title %}Најави се или ако си нов(а) регистрирај се{% endblock %}
+
+{% block heading %}Регистрација на нов корисник во ХакЛаб КИКА{% endblock %}
+
+
+{% block content %}
+{% if form.errors %}
+<p class="error">Ве молиме да ги поправите грешките подолу:</p>
+{% endif %}
+
+<div class="form">
+<form method="post" action="">
+<div class="form_field">
+<label for="id_first_name">Име:</label>{% if form.first_name.errors %} <span class="error">{{ form.first_name.errors|join:", " }}</span>{% endif %}
+{{ form.first_name }}
+</div>
+<div class="form_field">
+<label for="id_last_name">Презиме:</label>{% if form.last_name.errors %} <span class="error">{{ form.last_name.errors|join:", " }}</span>{% endif %}
+{{ form.last_name }}
+</div>
+<div class="form_field">
+<label for="id_username">Корисничко име:</label>
+{% if form.username.errors %} <span class="error">{{ form.username.errors|join:", " }}</span>{% endif %}
+{{ form.username }}
+</div>
+<div class="form_field">
+<label for="id_email">Email адреса:</label>{% if form.email.errors %} <span class="error">{{ form.email.errors|join:", " }}</span>{% endif %}
+{{ form.email }}
+</div>
+<div class="form_field"><label for="id_password1">Лозинка:</label>
+{% if form.password1.errors %} <span class="error">{{ form.password2.errors|join:", " }}</span>{% endif %}
+{{ form.password1 }}
+</div>
+<div class="form_field"><label for="id_password2">Лозинка (уште еднаш):</label>
+{% if form.password2.errors %} <span class="error">{{ form.password2.errors|join:", " }}</span>{% endif %}
+{{ form.password2 }}
+</div>
+
+<div class="form_field">
+<label id="label_tos" for="id_tos">Се согласувам со <a href="/about/tos/" target="_blank">правилата на користење на хаклабот</a></label>
+{{ form.tos }}&nbsp;
+{% if form.tos.errors %}&nbsp;
+<span class="error">{{ form.tos.errors|join:", " }}</span>{% endif %}
+</div>
+<p><input class="button" type="submit" value="Регистрирај ме" /></p>
+</form>
+</div>
+
+{% endblock %}

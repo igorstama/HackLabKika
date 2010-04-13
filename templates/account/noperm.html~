@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+{% endblock %}
+
+{% block page_title %}Немате привилегии за оваа страна{% endblock %}
+
+{% block main_content %}
+<h2>Здраво {{ user }}</h2>
+<p>моментално немате привилегии за бараната функционалност!</p>
+{% endblock %}

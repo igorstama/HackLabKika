@@ -1,0 +1,26 @@
+{% extends 'biblioteka/base.html' %}
+
+{% block title %}Производи{% endblock %}
+{% block extrahead %}
+	<script type="text/javascript" src="/site-media/js/close_win.js"></script>
+{% endblock %}
+
+
+{% block main_content %}
+	<h2>{{ heading }}</h2>
+	<div class="book_details">
+		<p><b>ISBN</b> {{ kniga.ISBN }}</p>
+		<p><b>Автор{% ifnotequal kniga.authors.count 1 %}и{% endifnotequal %}</b>
+		{% for a in kniga.authors.all %}
+		<a href="/biblioteka/avtor/{{ a.id }}">{{ a.name }}</a>
+		{% if not forloop.last %}, {% endif %}
+		{% endfor %}
+		</p>
+		<p><b>Година</b> {{ kniga.release_year }}</p>
+		<p><b>Тагови</b> {% for t in tags %}<a href="/biblioteka/tag/{{ t }}">{{ t }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+	</div>
+	<!--<div class="cart_details">
+		<p>Имате <b>{{ item_count }}</b> книги во вашата кошничка.</p>
+		<a href="/cart/submit/">Испратете ја нарачката</a>
+	</div>-->
+{% endblock %}

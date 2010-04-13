@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ХакЛаб КИКА - {% block title %}{% endblock %}</title>
+<link rel="kika icon" href="/site-media/img/favicon.ico" type="image/x-icon" />
+<link type="text/css" rel="stylesheet" media="all"  href="/site-media/css/kika.css" />
+{% block extrahead %}{% endblock %}
+</head>
+
+<body>
+	<div class="container">
+        <div class="header">
+        	<div class="meni">
+    	    	<a href="/biblioteka/">Библиотека</a>
+				{% if user.is_authenticated %}<a href="/account/">Кориснички профил</a>{% endif %}
+    	    	{% block menu %}
+        		{% endblock %}
+	        </div>
+			<div id="user_box" class="user_box">
+			{% if not user.is_anonymous %}
+				Здраво {{ user }}
+				| 
+				<a href="/account/">Профил</a>
+				| 
+				<a href="/account/logout/">Одјави се</a>
+				{% else %}
+				<a href="/account/login/">Најавете се</a>
+				или
+				<a href="/registration/">Регистрирајте се бесплатно</a>
+			{% endif %}
+			</div>
+			{% block app_heading %}{% endblock %}
+			<div class="clear">
+			</div>
+        </div>
+        
+        <div class="content_container">
+            <div class="content">
+                {% block main_content %}
+                {% endblock %}
+            </div>
+        </div>
+	</div>
+</body>
+</html>

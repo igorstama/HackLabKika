@@ -1,0 +1,13 @@
+from django.conf.urls.defaults import *
+from django.views.generic.simple import direct_to_template
+from django.contrib.auth.views import login, logout, password_change, password_change_done, password_reset, password_reset_done
+
+urlpatterns = patterns('rakotvorbi.registration.views',
+	(r'^$', 'register'),
+	# Activation keys get matched by \w+ instead of the more specific
+	# [a-fA-F0-9]+ because a bad activation key should still get to the view;
+	# that way it can return a sensible "invalid key" message instead of a
+	# confusing 404.
+	(r'^/activation/(?P<activation_key>\w+)/$', 'activate'),
+	(r'^/success/$', direct_to_template, {'template': 'registration/registration_complete.html'}),
+)
