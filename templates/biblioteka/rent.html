@@ -1,0 +1,24 @@
+{% extends 'biblioteka/base.html' %}
+
+{% block title %}Изнајмување на книга{% endblock %}
+{% block extrahead %}
+	<script type="text/javascript" src="/site-media/js/close_win.js"></script>
+{% endblock %}
+
+{% block heading %}{{ heading }}{% endblock %}
+
+{% block content %}
+	<div class="form">
+	<form method="post">
+		{% for field in form %}
+		<div class="form_field">
+			{{ field.errors }}
+			{{ field.label_tag }} {{ field }}
+			<p>{{ field.help_text }}</p>
+		</div>
+		{% endfor %}
+		<p> <input type="submit" class="button" name="rent_book" value="Изнајми ја книгата" /> &nbsp;&nbsp;&nbsp;
+			<a href="/biblioteka/" class="button">Откажи</a>
+	</form>
+	</div>	
+{% endblock %}

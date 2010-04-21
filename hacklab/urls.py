@@ -8,6 +8,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
 	(r'^$', direct_to_template, {'template':'index.html'}),
+	(r'^no_permission/$', direct_to_template, {'template':'account/noperm.html'}),
 	(r'^biblioteka', include('hacklab.biblioteka.urls')),
 	(r'^registration', include('hacklab.registration.urls')),
 	(r'^account', include('hacklab.registration.urls2')),

@@ -4,5 +4,22 @@
 
 {% block app_heading %}<h1 class='qlassik'><a href="/biblioteka/">БИБЛИОТЕКА</a></h1>{% endblock %}
 
+
 {% block main_content %}
+<div class="link_bar">
+	<a href="/biblioteka/">Почеток</a>
+	<a href="/biblioteka/cart/">Мои резервирани книги</a>
+	<a href="/biblioteka/iznajmeni_knigi/">Мои изнајмени книги</a>
+<!-- 	<a href="/biblioteka/">Сите книги</a> -->
+{% if perms.can_add_rental %}
+	<a href="/biblioteka/rezervirani_knigi/">Сите резервирани книги</a>
+	<a href="/biblioteka/iznajmeni_knigi/">Сите изнајмени книги</a>	
+{% endif %}
+</div>
+
+<h2>{% block heading %}{% endblock %}</h2>
+
+{% block content %}
+{% endblock %}
+
 {% endblock %}

@@ -1,19 +1,19 @@
+# -*- coding=utf-8 -*-
+
 from django.db import models
 from django.contrib.auth.models import User
+from hacklab import settings
 
 
-LANGUAGES = (
-	('MK', 'Makedonski'),
-	('EN', 'Angliski'),
-	('SRB','Srpski'),
-	('CRO', 'Hrvatski'),
-	('DE', 'Germanski'),
-	('FR', 'Francuski'),
-	('ES', 'Spanski'),
-	('ND', 'Holandski'),
-	('FI', 'Finski'),
-	('SW', 'Svedski'),
-)
+
+class Language(models.Model):
+	name = models.CharField(max_length=20)
+	iso_name = models.CharField(max_length=5)
+	
+	def __unicode__(self):
+		return self.iso_name
+
+
 
 class Author(models.Model):
 	name = models.CharField(max_length=150)
@@ -23,14 +23,27 @@ class Author(models.Model):
 
 
 
+class Publisher(models.Model):
+	name = models.CharField(max_length=30)
+	
+	def __unicode__(self):
+		return self.name
+
+
+
 class Book(models.Model):
-	title = models.CharField(max_length=250)
 	ISBN = models.CharField(max_length=30)
+	title = models.CharField(max_length=250)
 	release_year = models.IntegerField()
-	lang = models.CharField(max_length=20, choices=LANGUAGES)
+	lang = models.ForeignKey(Language)
+	publisher = models.ForeignKey(Publisher)
 	tags = models.CharField(max_length=300)
 	authors = models.ManyToManyField(Author)
 	description = models.CharField(max_length=500, null=True)
+	image = models.ImageField(upload_to=settings.MEDIA_ROOT+'uploads/', null=True, blank=True)
+	external_image_url = models.URLField(null=True, blank=True)
+	quantity = models.IntegerField()
+	in_stock = models.IntegerField()
 	
 	def __unicode__(self):
 		return self.title
@@ -39,17 +52,23 @@ class Book(models.Model):
 
 class Rental(models.Model):
 	book = models.ForeignKey(Book)
-	rentedon = models.DateTimeField(auto_now_add=True)
-	returned_on = models.DateTimeField()
-	rented_from = models.ForeignKey(User)
+	rented_on = models.DateTimeField(auto_now_add=True)
+	rented_by = models.ForeignKey(User)
+	returned_on = models.DateTimeField(null=True)
 	
 	def __unicode__(self):
-		return "%s - %s %s-:-%s" % (self.book.title, self.rented_from.username, self.rented_on, self.returned_on)
+		return "%s rented to %s on %s" % (self.book.title, self.rented_from.username, self.rented_on)
 
 
 
 class Reservation(models.Model):
-	reserved_on = models.DateTimeField(auto_now_add=True)
-	reserved_from = models.ForeignKey(User)
 	book = models.ForeignKey(Book)
+	reserved_by = models.ForeignKey(User)
+	reserved_on = models.DateTimeField(auto_now_add=True)
+	active = models.BooleanField(default=True)
+	
+	def __unicode__(self):
+		return "%s reserved on %s by %s" % (self.book.title, self.reserved_on, self.reserved_from)
+	
+	
 

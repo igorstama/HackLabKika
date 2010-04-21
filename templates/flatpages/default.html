@@ -1,8 +1,11 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
 
 {% block main_navigation %}
 {% endblock %}
+
+{% block title %}{{ flatpage.title }}{% endblock %}
+
+{% block app_heading %}<h1 class='qlassik'><a href="#">{{ flatpage.title }}</a></h1>{% endblock %}
 
 {% block main_content %}
 {{ flatpage.content }}

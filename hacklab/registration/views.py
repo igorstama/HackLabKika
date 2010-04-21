@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
+from hacklab.wrappers import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.models import User
 from hacklab.registration.forms import RegistrationForm, EditAccountForm
@@ -24,9 +24,8 @@ def register(request, success_url='/registration/success/'):
 			return HttpResponseRedirect(success_url)
 	else:
 		form = RegistrationForm()
-	return render_to_response('registration/registration_form.html',
-							  { 'form': form },
-							  context_instance=RequestContext(request))
+	return render_to_response(request, 'registration/registration_form.html',
+							  { 'form': form })
 
 
 
@@ -50,7 +49,7 @@ def edit_account(request):
 		}
 		form = EditAccountForm(data)
 	
-	return render_to_response('account/edit_account.html', {'form':form}, context_instance=RequestContext(request))
+	return render_to_response(request, 'account/edit_account.html', {'form':form})
 
 
 

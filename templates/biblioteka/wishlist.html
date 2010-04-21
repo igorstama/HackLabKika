@@ -12,11 +12,11 @@
 	<div class="lista">
 	<table>
 	<thead>
-	<tr><th>Слика</th><th>Податоци</th><th>Резервирање</th><th>Изнајми</th></tr>
+	<tr><th>Слика</th><th>Податоци</th><th></th></tr>
 	</thead>
 	<tbody>
 	{% for kniga in knigi %}
-		<tr {% ifequal kniga.in_stock 0 %}class="i"{% endifequal %}>
+		<tr>
 		<td><img src="{% if kniga.external_image_url %}{{ kniga.external_image_url }}{% else %}{{ kniga.image }}{% endif %}" height="50" /></td>
 		<td class="title">
 			<a href="/biblioteka/kniga/{{ kniga.id }}/" title="детали за книгата" class="title">{{ kniga.title }}</a>
@@ -30,20 +30,9 @@
 			<a href="/biblioteka/godina/{{ kniga.release_year }}/" title="година на издавање">{{ kniga.release_year }}</a>
 		</td>
 		<td class="ca">
-			<form method="post" action="/biblioteka/rezerviraj/">
-				<input type="image" name="kniga" value="{{ kniga.id }}" src="/site-media/img/res.png" />
+			<form method="post" action="/biblioteka/cart/remove/">
+				<input type="image" name="kniga" value="{{ kniga.id }}" src="/site-media/img/delete.png" />
 			</form>
-		</td>
-		<td class="ca">
-			{% if perms.can_add_rental %}
-				{% ifequal kniga.in_stock 0 %}
-				<img src="/site-media/img/nok.png" alt="Нема преостанати копии во библиотеката">
-				{% else %}
-				<form action="/biblioteka/iznajmi/{{ kniga.id }}/" method="get">
-					<input type="image" name="kniga" value="{{ kniga.id }}" src="/site-media/img/ok.png" />
-				</form>
-				{% endifequal %}
-			{% endif %}
 		</td>
 		</tr>
 	{% endfor %}
@@ -51,9 +40,6 @@
 	</table>
 	</div>
 	<div class="clear"></div>
-	<div class="book_details">
-	<p>Книгите напишани со <i>italic</i> се изнајмени и нема преостанати копии.</p>
-	</div>
 	<!--<div class="cart_details">
 		<p>Имате <b>{{ item_count }}</b> книги во вашата кошничка.</p>
 		<a href="/cart/submit/">Испратете ја нарачката</a>
