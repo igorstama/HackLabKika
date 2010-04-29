@@ -1,0 +1,70 @@
+{% extends 'biblioteka/base.html' %}
+
+{% block title %}Библиотека | Сите книги{% endblock %}
+{% block extrahead %}
+	<script type="text/javascript" src="/site-media/js/close_win.js"></script>
+{% endblock %}
+
+{% block heading %}{{ heading }}{% endblock %}
+
+{% block content %}
+<div class="main">
+	<div class="link_bar">
+	<h3>Филтри</h3>
+	<form action="." method="post">
+	<span>ISBN</span>
+	<input type="text" name="ISBN" />
+	</form>
+	<h3>Архива по месеци</h3>
+	{% for link in dates %}
+	<a href="/{{ path }}/{{ link.year }}/{{ link.month }}/">{{ link|date:"N" }} {{ link.year }}</a>
+	{% endfor %}
+	</div>
+	<div class="lista history">
+	<table>
+	<thead>
+	<tr><th>Слика</th><th>Податоци</th><th>Изнајмена од</th><th>Изнајмена на</th><th>Вратена на</th></tr>
+	</thead>
+	<tbody>
+	{% for item in list %}
+		<tr {% ifequal item.book.in_stock 0 %}class="i"{% endifequal %}
+			{% if item.returned_on %}class="returned"{% else %}class="rented"{% endif %}
+		>
+		<td><img src="{% if item.book.external_image_url %}{{ item.book.external_image_url }}{% else %}{{ item.book.image }}{% endif %}" height="50" /></td>
+		<td class="title">
+			{{ item.book.ISBN }}
+			<a href="/biblioteka/kniga/{{ item.book.id }}/" title="детали за книгата" class="title">{{ item.book.title }}</a>
+			од
+			{% for author in item.book.authors.all %}
+			<a href="/biblioteka/avtor/{{ author.id }}/" title="класа">{{ author }}</a>
+			{% endfor %}
+			 - 
+			<a href="/biblioteka/izdavac/{{ item.book.publisher.id }}/" title="година на издавање">{{ item.book.publisher }}</a>
+			, 
+			<a href="/biblioteka/godina/{{ item.book.release_year }}/" title="година на издавање">{{ item.book.release_year }}</a>
+		</td>
+		<td class="ca">
+			{{ item.rented_by.get_full_name }}
+		</td>
+		<td class="ca">
+			<b>{{ item.rented_on|date:"d N Y" }}</b>
+			во
+			<b>{{ item.rented_on|date:"H:m" }}h</b>
+		</td>
+		<td class="ca">
+			<b>{{ item.returned_on|date:"d N Y" }}</b>
+			во
+			<b>{{ item.returned_on|date:"H:m" }}h</b>
+		</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+	</table>
+	</div>
+	<div class="clear"></div>
+	<!--<div class="cart_details">
+		<p>Имате <b>{{ item_count }}</b> книги во вашата кошничка.</p>
+		<a href="/cart/submit/">Испратете ја нарачката</a>
+	</div>-->
+</div>
+{% endblock %}

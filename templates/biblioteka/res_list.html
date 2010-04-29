@@ -9,16 +9,24 @@
 
 {% block content %}
 <div class="main">
+	<div class="link_bar">
+		<h3>Филтри</h3>
+		<form action="." method="post">
+		<span>ISBN</span>
+		<input type="text" name="ISBN" />
+		</form>
+	</div>
 	<div class="lista">
 	<table>
 	<thead>
-	<tr><th>Слика</th><th>Податоци</th><th>Резервирана</th><th>Реден број</th><th>Изнајми</th></tr>
+	<tr><th>Слика</th><th>Податоци</th><th>Резервирана</th><!--<th>Реден број</th>--><th>Изнајми</th></tr>
 	</thead>
 	<tbody>
 	{% for res in reservations %}
 		<tr {% ifequal res.book.in_stock 0 %}class="i"{% endifequal %}>
 		<td><img src="{% if res.book.external_image_url %}{{ res.book.external_image_url }}{% else %}{{ res.book.image }}{% endif %}" height="50" /></td>
 		<td class="title">
+			{{ res.book.ISBN }}
 			<a href="/biblioteka/kniga/{{ res.book.id }}/" title="детали за книгата" class="title">{{ res.book.title }}</a>
 			од
 			{% for author in res.book.authors.all %}
@@ -37,9 +45,9 @@
 			во
 			<b>{{ res.reserved_on|date:"H:m" }}h</b>
 		</td>
-		<td class="ca">
+		<!--<td class="ca">
 			{{ res.ordinal }}
-		</td>
+		</td>-->
 		<td class="ca">
 			{% if perms.can_add_rental %}
 				{% ifequal kniga.in_stock 0 %}

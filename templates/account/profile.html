@@ -2,10 +2,12 @@
 
 
 {% block content %}
-<div class="user_details">
-	<p><b>Корисник</b>&nbsp;{{ user.username }}</p>
-	<p><b>Име</b>&nbsp;{{ user.first_name }}</p>
-	<p><b>Презиме</b>&nbsp;{{ user.last_name }}</p>
-	<p><b>email</b>&nbsp;{{ user.email }}</p>
+<div class="main">
+	<div class="user_details">
+		<p><b>Корисник</b>&nbsp;{{ user.username }}</p>
+		<p><b>Име</b>&nbsp;{{ user.first_name }}</p>
+		<p><b>Презиме</b>&nbsp;{{ user.last_name }}</p>
+		<p><b>email</b>&nbsp;{{ user.email }}</p>
+	</div>
 </div>
 {% endblock %}

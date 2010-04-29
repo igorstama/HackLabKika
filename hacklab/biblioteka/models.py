@@ -67,6 +67,7 @@ class Reservation(models.Model):
 	reserved_on = models.DateTimeField(auto_now_add=True)
 	active = models.BooleanField(default=True)
 	
+	
 	def __unicode__(self):
 		return "%s reserved on %s by %s" % (self.book.title, self.reserved_on, self.reserved_from)
 	

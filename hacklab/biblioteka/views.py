@@ -64,26 +64,23 @@ def by_publisher(request, p_id):
 
 
 @permission_required('biblioteka.can_add_rental', login_url='/no_permission/')
-def iznajmeni(request):
-	'''
-	Metod za listanje na site iznajmeni knigi
-	'''
-	books = Book.objects.filter(in_stock=0)
-	return render_to_response(request, 'biblioteka/list.html', {'knigi':books, 'heading':'Листа на сите изнајмени книги'})
-
-
-@permission_required('biblioteka.can_add_rental', login_url='/no_permission/')
 def rezervirani(request):
 	'''
 	Metod za listanje na site rezervirani knigi.
 	Potrebna e permisija
 	'''
 	reservations = Reservation.objects.filter(active=True)
+	if request.method == 'POST':
+		try:
+			reservations = reservations.filter(book__ISBN=request.POST['ISBN'])
+		except:
+			pass
+		
 	return render_to_response(request, 'biblioteka/res_list.html', {'reservations':reservations, 'heading':'Листа на сите резервирани книги'})
 
 
 # views za naracuvanje i rezerviranje
-
+@login_required
 def rezerviraj(request):
 	'''
 	Metod za rezerviranje na kniga od user-ot koj go pravi requestot
@@ -101,7 +98,7 @@ def rezerviraj(request):
 			reservation = get_object_or_404(Reservation, reserved_by=request.user, book=kniga, active=True)
 		except Exception, e:
 			# ako frli exception, odnosno ako go nema objektot vo listata, 
-			# togas treba da se dodade vo sesija i vo baza
+			# togas treba da se dodade vo baza
 			#wishlist.append(kniga)
 			Reservation.objects.create(book=kniga, reserved_by=request.user)
 		# resetiranje na sesiskata promenliva
@@ -177,9 +174,50 @@ def remove_from_cart(request):
 			reservation.active = False
 			reservation.save()
 		except Exception, exc:
-			# ova stoi ovde za debig, 
+			# ova stoi ovde za debug, 
 			# koga ke se pravi deployment treba da se trgne i da se odkomentira redirektot
-			raise exc
-			# return HttpResponseRedirect('/biblioteka/')
+			# raise exc
+			return HttpResponseRedirect('/biblioteka/')
 	return HttpResponseRedirect('/biblioteka/cart/')
+
+
+def get_rental_list(user=None, year=None, month=None, ISBN=None):
+	if user is not None:
+		rental_list = Rental.objects.filter(rented_by=user)
+	else:
+		rental_list = Rental.objects.all()
+	if year is not None:
+		rental_list = rental_list.filter(rented_on__year=year)
+	if month is not None:
+		rental_list = rental_list.filter(rented_on__month=month)
+	if ISBN is not None:
+		rental_list = rental_list.filter(book__ISBN=ISBN)
+	return rental_list.order_by('-rented_on')
+
+
+@login_required
+def history(request, rented_by=None, year=None, month=None):
+	dates = Rental.objects.dates('rented_on', 'month')
+	isbn = None
+	if request.method == 'POST':
+		try:
+			isbn = request.POST['ISBN']
+		except:
+			pass
+	
+	if rented_by is None:
+		if request.user.has_perm('can_add_rental'):
+			rental_list = get_rental_list(year=year, month=month, ISBN=isbn)
+		else:
+			rental_list = get_rental_list(user=request.user, year=year, month=month, ISBN=isbn)
+	else:
+		rental_list = get_rental_list(user=rented_by, year=year, month=month, ISBN=isbn)
+	path = "/".join(request.path.split('/')[1:3])
+	return render_to_response(request, 'biblioteka/history.html', {'list':rental_list, 'dates':dates, 'path':path})
+
+
+@login_required
+def my_history(request, year=None, month=None):
+	return history(request, rented_by=request.user, year=year, month=month)
+
 

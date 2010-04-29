@@ -12,12 +12,13 @@
 	<div class="lista">
 	<table>
 	<thead>
-	<tr><th>Слика</th><th>Податоци</th><th>Резервирање</th><th>Изнајми</th></tr>
+	<tr><th>Слика</th><th>ISBN</th><th>Податоци</th><th>Резервирај</th>{% if perms.can_add_rental %}<th>Изнајми</th>{% endif %}</tr>
 	</thead>
 	<tbody>
 	{% for kniga in knigi %}
 		<tr {% ifequal kniga.in_stock 0 %}class="i"{% endifequal %}>
 		<td><img src="{% if kniga.external_image_url %}{{ kniga.external_image_url }}{% else %}{{ kniga.image }}{% endif %}" height="50" /></td>
+		<td>{{ kniga.ISBN }}</td>
 		<td class="title">
 			<a href="/biblioteka/kniga/{{ kniga.id }}/" title="детали за книгата" class="title">{{ kniga.title }}</a>
 			од
@@ -30,12 +31,16 @@
 			<a href="/biblioteka/godina/{{ kniga.release_year }}/" title="година на издавање">{{ kniga.release_year }}</a>
 		</td>
 		<td class="ca">
+			<!-- if kniga in user.reservation_set.all 
+			<img src="/site-media/img/nres.png" alt="Има резервација за оваа книга">
+			 else -->
 			<form method="post" action="/biblioteka/rezerviraj/">
 				<input type="image" name="kniga" value="{{ kniga.id }}" src="/site-media/img/res.png" />
 			</form>
+			<!-- endif -->
 		</td>
+		{% if perms.can_add_rental %}
 		<td class="ca">
-			{% if perms.can_add_rental %}
 				{% ifequal kniga.in_stock 0 %}
 				<img src="/site-media/img/nok.png" alt="Нема преостанати копии во библиотеката">
 				{% else %}
@@ -43,8 +48,8 @@
 					<input type="image" name="kniga" value="{{ kniga.id }}" src="/site-media/img/ok.png" />
 				</form>
 				{% endifequal %}
-			{% endif %}
 		</td>
+		{% endif %}
 		</tr>
 	{% endfor %}
 	</tbody>

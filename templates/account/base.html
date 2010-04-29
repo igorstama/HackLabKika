@@ -5,14 +5,13 @@
 {% block app_heading %}<h1><a href="/account/">Кориснички профил</a></h1>{% endblock %}
 
 {% block main_content %}
-
-<h2>{% block heading %}{{ user.get_full_name }} - {{ user }}{% endblock %}</h2>
 {% if user.is_authenticated %}
-<div class="link_bar">
+<div class="submenu">
 	<a href="/account/change_password/">Смени ја лозинката</a>
 	<a href="/account/edit_account/">Смени ги деталите</a>
 </div>
 {% endif %}
+<h2>{% block heading %}{{ user.get_full_name }} - {{ user }}{% endblock %}</h2>
 
 {% block content %}
 {% endblock %}

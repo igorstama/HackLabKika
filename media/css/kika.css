@@ -149,13 +149,13 @@ div.header div.right div.search input.search_button {
 	width:auto;
 	cursor:pointer;
 }
-div.link_bar {
+div.submenu {
 	margin:-30px 0 0 0;
 /* 	border-bottom:1px solid #99afaf; */
 	background:#f0f0f0;
 	float:left;
 }
-div.link_bar a {
+div.submenu a {
 	display:block;
 	font-size:1.1em;
 	padding:10px;
@@ -165,10 +165,34 @@ div.link_bar a {
 	border-bottom:0;
 	border-left:0;
 }
-div.link_bar a:hover {
+div.submenu a:hover {
 	background:#f0f0f0 url(../img/menu_bkg.png) top repeat-x;
 	text-decoration:none;
 /* 	color:#000000; */
+}
+div.link_bar {
+	float:left;
+	width:200px;
+	background:#efefef;
+	margin:-20px -1px 0 -20px;
+	padding:20px 0;
+}
+div.link_bar form {
+	padding:0 0 0 10px;
+	margin:0 0 20px 0;
+}
+div.link_bar h3 {
+	padding:10px;
+	font-size:1.5em;
+}
+div.link_bar a {
+	display:block;
+	padding:5px 10px;
+	font-size:1.3em;
+}
+div.link_bar a:hover {
+	background:#ffffff;
+	text-decoration:none;
 }
 div.header div.user_box {
   float:right;
@@ -260,6 +284,9 @@ div.content div.lista {
 }
 div.content div.lista table {
 	font-size:1.2em;
+}
+div.content div.history table {
+	border-left:1px solid #e8e8e8;
 }
 div.content div.lista table a {
 	display:inline;
