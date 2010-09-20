@@ -2,7 +2,6 @@
 
 from django import forms
 from django.contrib.auth.models import User
-from hacklab.biblioteka.models import Rental
 
 
 class RentalForm(forms.Form):

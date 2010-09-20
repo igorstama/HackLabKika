@@ -3,31 +3,34 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>ХакЛаб КИКА - {% block title %}{% endblock %}</title>
-<link rel="kika icon" href="/site-media/img/favicon.ico" type="image/x-icon" />
-<link type="text/css" rel="stylesheet" media="all"  href="/site-media/css/kika.css" />
+<link rel="kika icon" href="{{ MEDIA_URL }}img/favicon.ico" type="image/x-icon" />
+<link type="text/css" rel="stylesheet" media="all"  href="{{ MEDIA_URL }}css/kika.css" />
 {% block extrahead %}{% endblock %}
 </head>
 
 <body>
 	<div class="container">
         <div class="header">
-        	<div class="meni">
-    	    	<a href="/biblioteka/">Библиотека</a>
-				{% if user.is_authenticated %}<a href="/account/">Кориснички профил</a>{% endif %}
-    	    	{% block menu %}
-        		{% endblock %}
+			<div class="meni">
+				<a href="{% url hacklab.biblioteka.views.index %}">Библиотека</a>
+				{% if user.is_authenticated %}
+					<a href="{% url account_profile %}">Кориснички профил</a>
+				{% endif %}
+
+				{% block menu %}
+				{% endblock %}
 	        </div>
 			<div id="user_box" class="user_box">
-			{% if not user.is_anonymous %}
+			{% if user.is_authenticated %}
 				Здраво {{ user }}
-				| 
-				<a href="/account/">Профил</a>
-				| 
-				<a href="/account/logout/">Одјави се</a>
+				|
+				<a href="{% url account_profile %}">Профил</a>
+				|
+				<a href="{% url django.contrib.auth.views.logout %}">Одјави се</a>
 				{% else %}
-				<a href="/account/login/">Најавете се</a>
+				<a href="{% url user_login %}">Најавете се</a>
 				или
-				<a href="/registration/">Регистрирајте се бесплатно</a>
+				<a href="{% url hacklab.registration.views.register %}">Регистрирајте се бесплатно</a>
 			{% endif %}
 			</div>
 			{% block app_heading %}{% endblock %}

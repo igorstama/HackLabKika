@@ -1,0 +1,46 @@
+{% extends 'biblioteka/base.html' %}
+
+{% block title %}Библиотека | Детали за {{ kniga.title }}{% endblock %}
+{% block extrahead %}
+{% endblock %}
+
+{% block heading %}{{ heading }}{% endblock %}
+
+{% block content %}
+<div class="main">
+	<div class="book_details">
+		<p><img src="{% if kniga.external_image_url %}{{ kniga.external_image_url }}{% else %}{{ kniga.image }}{% endif %}" /></p>
+		<p><b>ISBN</b> {{ kniga.ISBN }}</p>
+		<p><b>Автор{% ifnotequal kniga.authors.count 1 %}и{% endifnotequal %}</b>
+		{% for a in kniga.authors.all %}
+		<a href="{% url hacklab.biblioteka.views.index %}avtor/{{ a.id }}">{{ a.name }}</a>
+		{% if not forloop.last %}, {% endif %}
+		{% endfor %}
+		</p>
+		<p><b>Издавач</b> <a href="{% url hacklab.biblioteka.views.by_publisher kniga.publisher.id %}" title="година на издавање">{{ kniga.publisher }}</a></p>
+		<p><b>Година</b> <a href="{% url hacklab.biblioteka.views.by_year kniga.release_year %}" title="година на издавање">{{ kniga.release_year }}</a></p>
+		<p><b>Тагови</b> {% for t in tags %}<a href="{% url hacklab.biblioteka.views.by_tag t %}">{{ t }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+		<p><b>Преостанати копии</b> {{ kniga.in_stock }}</p>
+
+		<form method="post" action="{% url hacklab.biblioteka.views.reserve_book %}">{% csrf_token %}
+			<input type="hidden" name="kniga" value="{{ kniga.id }}" />
+			<p><input type="submit" name="submit_reservation" value="Резервирај ја книгата" /></p>
+		</form>
+
+
+		{% if perms.biblioteka.can_add_rental %}
+			{% ifnotequal kniga.in_stock 0 %}
+			<form action="{% url hacklab.biblioteka.views.rent_book kniga.id %}" method="get">{% csrf_token %}
+				<p><input type="submit" name="submit_rent" value="Изнајми ја книгата" /></p>
+			</form>
+			{% endifnotequal %}
+
+			{% ifnotequal kniga.in_stock kniga.quantity %}
+			<form action="{% url hacklab.biblioteka.views.return_book kniga.id %}" method="get">{% csrf_token %}
+				<p><input type="submit" name="submit_rent" value="Врати ја книгата" /></p>
+			</form>
+			{% endifnotequal %}
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

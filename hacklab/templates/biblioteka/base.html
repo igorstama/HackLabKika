@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Biblioteka{% endblock %}
+
+{% block app_heading %}<h1 class='qlassik'><a href="{% url hacklab.biblioteka.views.index %}">БИБЛИОТЕКА</a></h1>{% endblock %}
+
+
+{% block main_content %}
+	{% if user.is_authenticated %}
+		<div class="submenu">
+			<a href="{% url hacklab.biblioteka.views.index %}">Почеток</a>
+			<a href="{% url hacklab.biblioteka.views.cart %}">Мои резервирани книги</a>
+			<a href="{% url hacklab.biblioteka.views.my_history %}">Мои изнајмени книги</a>
+		{% if perms.biblioteka.can_add_rental %}
+
+		<a href="{% url hacklab.biblioteka.views.reserved_books %}">Сите резервирани книги</a>
+		<a href="{% url hacklab.biblioteka.views.history %}">Сите изнајмени книги</a>
+		{% endif %}
+		</div>
+	{% endif %}
+	<h2>{% block heading %}{% endblock %}</h2>
+
+	{% block content %}
+	{% endblock %}
+{% endblock %}

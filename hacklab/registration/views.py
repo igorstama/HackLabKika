@@ -34,11 +34,9 @@ def edit_account(request):
 		form = EditAccountForm(request.POST)
 		if form.is_valid():
 			u = User.objects.get(pk=request.user.id)
-			# zemi gi novite podatoci od formata
 			u.first_name = form.cleaned_data['first_name']
 			u.last_name = form.cleaned_data['last_name']
 			u.email = form.cleaned_data['email']
-			# zacuvaj gi novite podatoci
 			u.save()
 	else:
 		data = {
@@ -48,7 +46,7 @@ def edit_account(request):
 			'email':request.user.email,
 		}
 		form = EditAccountForm(data)
-	
+
 	return render_to_response(request, 'account/edit_account.html', {'form':form})
 
 

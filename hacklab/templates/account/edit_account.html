@@ -1,0 +1,31 @@
+{% extends "account/base.html" %}
+
+
+{% block heading %}Менување на податоците на {{ user.get_full_name }} - {{ user }}{% endblock %}
+
+
+{% block content %}
+{% if form.errors %}
+<p class="error">Ве молиме да ги поправите грешките подолу:</p>
+{% endif %}
+
+<div class="form">
+	<form method="post" action="">
+		{% csrf_token %}
+		<div class="form_field">
+			<label for="id_first_name">Име:</label>{% if form.first_name.errors %} <span class="error">{{ form.first_name.errors|join:", " }}</span>{% endif %}
+			{{ form.first_name }}
+		</div>
+		<div class="form_field">
+			<label for="id_last_name">Презиме:</label>{% if form.last_name.errors %} <span class="error">{{ form.last_name.errors|join:", " }}</span>{% endif %}
+			{{ form.last_name }}
+		</div>
+		<div class="form_field">
+			<label for="id_email">Email адреса:</label>{% if form.email.errors %} <span class="error">{{ form.email.errors|join:", " }}</span>{% endif %}
+			{{ form.email }}
+		</div>
+		<p><input class="button" type="submit" value="Внеси" /></p>
+	</form>
+</div>
+
+{% endblock %}

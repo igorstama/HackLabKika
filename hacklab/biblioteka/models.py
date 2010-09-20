@@ -9,7 +9,7 @@ from hacklab import settings
 class Language(models.Model):
 	name = models.CharField(max_length=20)
 	iso_name = models.CharField(max_length=5)
-	
+
 	def __unicode__(self):
 		return self.iso_name
 
@@ -25,7 +25,7 @@ class Author(models.Model):
 
 class Publisher(models.Model):
 	name = models.CharField(max_length=30)
-	
+
 	def __unicode__(self):
 		return self.name
 
@@ -44,32 +44,40 @@ class Book(models.Model):
 	external_image_url = models.URLField(null=True, blank=True)
 	quantity = models.IntegerField()
 	in_stock = models.IntegerField()
-	
+	donated_by = models.CharField(max_length=128)
+
 	def __unicode__(self):
 		return self.title
 
 
+
+class RentalManager(models.Manager):
+	pass
 
 class Rental(models.Model):
 	book = models.ForeignKey(Book)
 	rented_on = models.DateTimeField(auto_now_add=True)
 	rented_by = models.ForeignKey(User)
 	returned_on = models.DateTimeField(null=True)
-	
+
 	def __unicode__(self):
-		return "%s rented to %s on %s" % (self.book.title, self.rented_from.username, self.rented_on)
+		return "%s rented to %s on %s" % (self.book.title, self.rented_by.username, self.rented_on)
 
 
+
+
+class ReservationManager(models.Manager):
+	pass
 
 class Reservation(models.Model):
 	book = models.ForeignKey(Book)
-	reserved_by = models.ForeignKey(User)
+	reserved_by = models.ForeignKey(User, related_name="reservations")
 	reserved_on = models.DateTimeField(auto_now_add=True)
 	active = models.BooleanField(default=True)
-	
-	
+
+
 	def __unicode__(self):
-		return "%s reserved on %s by %s" % (self.book.title, self.reserved_on, self.reserved_from)
-	
-	
+		return "%s reserved on %s by %s" % (self.book.title, self.reserved_on, self.reserved_by)
+
+
 

@@ -15,13 +15,13 @@ from hacklab.wrappers import render_to_response
 
 def index(request):
 	'''
-	Metod za listanje na site knigi 
+	Metod za listanje na site knigi
 	'''
 	books = Book.objects.all()
 	return render_to_response(request, 'biblioteka/list.html', {'knigi':books, 'heading':'Листа на сите книги во ХакЛаб КИКА'})
 
 
-def view_kniga(request, k_id):
+def view_book_details(request, k_id):
 	'''
 	Metod za gledanje na detali na odredena kniga
 	'''
@@ -31,7 +31,7 @@ def view_kniga(request, k_id):
 	return render_to_response(request, 'biblioteka/detali.html', {'kniga':book, 'heading':heading, 'tags':tags})
 
 
-def by_godina(request, godina):
+def by_year(request, godina):
 	'''
 	Metod za listanje na site knigi od godina
 	'''
@@ -64,7 +64,7 @@ def by_publisher(request, p_id):
 
 
 @permission_required('biblioteka.can_add_rental', login_url='/no_permission/')
-def rezervirani(request):
+def reserved_books(request):
 	'''
 	Metod za listanje na site rezervirani knigi.
 	Potrebna e permisija
@@ -75,13 +75,13 @@ def rezervirani(request):
 			reservations = reservations.filter(book__ISBN=request.POST['ISBN'])
 		except:
 			pass
-		
+
 	return render_to_response(request, 'biblioteka/res_list.html', {'reservations':reservations, 'heading':'Листа на сите резервирани книги'})
 
 
 # views za naracuvanje i rezerviranje
 @login_required
-def rezerviraj(request):
+def reserve_book(request):
 	'''
 	Metod za rezerviranje na kniga od user-ot koj go pravi requestot
 	'''
@@ -92,12 +92,12 @@ def rezerviraj(request):
 	if request.method == 'POST':
 		kniga = get_object_or_404(Book, pk=request.POST['kniga'])
 		try:
-			# pri povik na index() metodot na python lista dokolku objektot go nema vo listata 
+			# pri povik na index() metodot na python lista dokolku objektot go nema vo listata
 			# metodot frla exception ValueError, a dokolku go ima go vrakja indeksot od objektot
 			#wishlist.index(kniga)
 			reservation = get_object_or_404(Reservation, reserved_by=request.user, book=kniga, active=True)
 		except Exception, e:
-			# ako frli exception, odnosno ako go nema objektot vo listata, 
+			# ako frli exception, odnosno ako go nema objektot vo listata,
 			# togas treba da se dodade vo baza
 			#wishlist.append(kniga)
 			Reservation.objects.create(book=kniga, reserved_by=request.user)
@@ -106,8 +106,9 @@ def rezerviraj(request):
 	return HttpResponseRedirect('/biblioteka/cart/')
 
 
+@login_required
 @permission_required('biblioteka.can_add_rental', login_url='/no_permission/')
-def iznajmi(request, k_id):
+def rent_book(request, k_id):
 	'''
 	Metod za iznajmuvanje na kniga na user.
 	requestot mora da se napravi od korisnik so can_add_rental permisija
@@ -120,6 +121,9 @@ def iznajmi(request, k_id):
 			if form.is_valid():
 				# korisnikot na koj mu se iznajmuva knigata
 				user = form.cleaned_data['user']
+				res = Reservation.objects.filter(reserved_by=user, book=kniga)
+				for r in res:
+					r.delete()
 				# kreiranje i zacuvuvanje na nov objekt za izdavanje na kniga
 				r = Rental.objects.create(book=kniga, rented_by=user)
 				# se namaluva brojot na kopii vo bibliotekata
@@ -127,30 +131,50 @@ def iznajmi(request, k_id):
 				kniga.save()
 				return HttpResponseRedirect('/biblioteka/')
 		else:
-			return render_to_response(request, 'biblioteka/rent.html', {'heading':u'Изнајмувањето неможе да се изведе бидејќи нема преостанати копии.'})
+			return render_to_response(request, 'biblioteka/rent.html',
+							{'heading':u'Изнајмувањето неможе да се изведе бидејќи нема преостанати копии.'})
 	else:
 		form = RentalForm()
+		field = form.fields['user']
+		qs = User.objects.exclude(rental__book=kniga, rental__returned_on=None)
+
+		print qs
+		if qs.count() > 0:
+			field.queryset = qs
 	return render_to_response(request, 'biblioteka/rent.html', {'form':form, 'heading':u'Изнајмување на \"'+kniga.title+'\"'})
 
 
-
-@permission_required('biblioteka.can_change_rental', login_url='/no_permission/')
-def vrati(request, k_id):
+@login_required
+@permission_required('biblioteka.can_change_rental')
+def return_book(request, k_id):
 	'''
 	Metod za vrakjanje na rezervirana kniga
 	'''
 	# import na datetime za da se zapise vremeto na vrakjanje
 	from datetime import datetime
-	# ova ke treba da se smeni zosto user-ot koj go pravi requestot 
-	# nemoze da vrakja bez da se proveri vrakjanjeto
 	kniga = get_object_or_404(Book, pk=k_id)
-	r = get_object_or_404(Rental, book=kniga, rented_by=request.user, returned_on=None)
-	# se zapisuva vremeto na vrakjanje
-	r.returned_on = datetime.now()
-	r.save()
-	# se pokacuva brojot na kopii vo bibliotekata
-	kniga.in_stock += 1
-	kniga.save()
+	# zemanje na site korisnici koi ja imaat iznajmeno knigata (ako ima poveke kopii)
+	users = User.objects.filter(rental__book=kniga, rental__returned_on=None)
+
+	if request.method=="POST":
+		# kreiranje na forma so podatocite zemeni od POST
+		form = RentalForm(request.POST)
+		if form.is_valid():
+			user = form.cleaned_data['user']
+			r = Rental.objects.filter(book=kniga, rented_by=user).order_by('rented_on')[0]
+			r.returned_on = datetime.today()
+			r.save()
+			# se inkrementira brojot na kopii vo bibliotekata
+			kniga.in_stock += 1
+			kniga.save()
+	else:
+		form = RentalForm()
+		qs = User.objects.filter(rental__book=kniga, rental__returned_on=None)
+		print qs
+		if qs.count() > 0:
+			field = form.fields['user']
+			field.queryset = qs
+		return render_to_response(request, 'biblioteka/return.html', {'kniga':kniga, 'form':form})
 	# vrakjanje na pocetnata strana
 	return HttpResponseRedirect('/biblioteka/')
 
@@ -158,8 +182,9 @@ def vrati(request, k_id):
 
 @login_required
 def cart(request):
-	wishlist = Book.objects.filter(reservation__active=True, reservation__reserved_by=request.user)
-	return render_to_response(request, 'biblioteka/wishlist.html', {'knigi':wishlist, 'heading':u'Листа на сите мои резервирани книги'})
+	wishlist = Reservation.objects.filter(active=True, reserved_by=request.user)
+	return render_to_response(request, 'biblioteka/wishlist.html', {'reservations':wishlist,
+								'heading':u'Листа на сите резервирани книги'})
 
 
 
@@ -168,16 +193,14 @@ def remove_from_cart(request):
 	# request.session.__delitem__('wishlist')
 	if request.method == 'POST':
 		try:
-			print request.POST['kniga']
-			kniga = get_object_or_404(Book, pk=request.POST['kniga'])
-			reservation = get_object_or_404(Reservation, reserved_by=request.user, book=kniga, active=True)
-			reservation.active = False
-			reservation.save()
+			reservation = get_object_or_404(Reservation, pk=request.POST['reservation'])
+			reservation.delete()
+			# reservation.save()
 		except Exception, exc:
-			# ova stoi ovde za debug, 
-			# koga ke se pravi deployment treba da se trgne i da se odkomentira redirektot
-			# raise exc
-			return HttpResponseRedirect('/biblioteka/')
+			# ova stoi ovde za debug,
+			# koga ke se pravi deployment treba da se trgne dolnava linija
+			# i da se dodade custom 500 (server error) handler
+			print "EXCEPTION ======== %s" % exc
 	return HttpResponseRedirect('/biblioteka/cart/')
 
 
@@ -191,7 +214,7 @@ def get_rental_list(user=None, year=None, month=None, ISBN=None):
 	if month is not None:
 		rental_list = rental_list.filter(rented_on__month=month)
 	if ISBN is not None:
-		rental_list = rental_list.filter(book__ISBN=ISBN)
+		rental_list = rental_list.filter(book__ISBN=ISBN.strip())
 	return rental_list.order_by('-rented_on')
 
 
@@ -201,10 +224,10 @@ def history(request, rented_by=None, year=None, month=None):
 	isbn = None
 	if request.method == 'POST':
 		try:
-			isbn = request.POST['ISBN']
+			isbn = request.POST['ISBN'].strip()
 		except:
 			pass
-	
+
 	if rented_by is None:
 		if request.user.has_perm('can_add_rental'):
 			rental_list = get_rental_list(year=year, month=month, ISBN=isbn)

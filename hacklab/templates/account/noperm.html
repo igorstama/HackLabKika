@@ -1,0 +1,25 @@
+{% extends "account/base.html" %}
+
+{% block extrahead %}
+{% endblock %}
+
+{% block page_title %}Немате привилегии за оваа страна{% endblock %}
+
+{% block main_content %}
+<h2>
+	{% if user.is_authenticated %}
+	Најавени сте како {{ user }}
+	{% else %}
+	Не сте најавени! Најавете се <b><a href="{% url user_login %}">овде</a></b>
+	{% endif %}
+</h2>
+<div class="main">
+	<div class="book_details">
+	<p>Oваа страна ја добивте бидејќи немате привилегии за бараната функционалност!</p>
+	{% if user.is_authenticated %}
+	<p>Доколку имате сметка која ја дозволува оваа функционалност <a href="{% url django.contrib.auth.views.logout %}">одјавете се</a>
+	и потоа најавете се <a href="{% url user_login %}{{ uri.query }}">овде</a></p>
+	</div>
+	{% endif %}
+</div>
+{% endblock %}

@@ -57,12 +57,12 @@ MEDIA_ROOT = STATIC_PATH + '/media/'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/site-media/'
+MEDIA_URL = '/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/adminmedia/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '&t-y5rp3rz9qig4)iuad-g_!zpb)3a0p(^_3v10@wx0hhwy!0m'
@@ -77,6 +77,7 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 	'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
@@ -87,8 +88,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-	
-	STATIC_PATH + '/templates/'
+
+	PROJECT_PATH + '/templates/'
 )
 
 INSTALLED_APPS = (
@@ -98,6 +99,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
 	'django.contrib.admin',
 	'django.contrib.flatpages',
-	
+
 	'hacklab.biblioteka',
 )

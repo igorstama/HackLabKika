@@ -7,8 +7,8 @@
 {% block main_content %}
 {% if user.is_authenticated %}
 <div class="submenu">
-	<a href="/account/change_password/">Смени ја лозинката</a>
-	<a href="/account/edit_account/">Смени ги деталите</a>
+	<a href="{% url changepassword %}">Смени ја лозинката</a>
+	<a href="{% url hacklab.registration.views.edit_account %}">Смени ги деталите</a>
 </div>
 {% endif %}
 <h2>{% block heading %}{{ user.get_full_name }} - {{ user }}{% endblock %}</h2>

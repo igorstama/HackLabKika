@@ -3,10 +3,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>ХакЛаб КИКА - Почетна страна</title>
-<link rel="electrorama icon" href="/site-media/img/favicon.ico" type="image/x-icon" />
-<link type="text/css" rel="stylesheet" media="all"  href="/site-media/css/kika.css" />
-<script src="/site-media/js/scroll.js" type="text/javascript"></script>
-<script src="/site-media/js/jscroller2-1.61.js" type="text/javascript"></script>
+<link rel="kika icon" href="{{ MEDIA_URL }}img/favicon.ico" type="image/x-icon" />
+<link type="text/css" rel="stylesheet" media="all"  href="{{ MEDIA_URL }}css/kika.css" />
 {% block extrahead %}{% endblock %}
 </head>
 
@@ -17,8 +15,8 @@
         <p>&nbsp;</p><p>&nbsp;</p>
         <h2>Добредојдовте на сајтот на КИКА</h2>
 		<div class="main">
-			<p>Сега за сега има само <a href="/biblioteka/">Библиотека</a></p>
-		</div>	
+			<p>Сега за сега има само <a href="{% url hacklab.biblioteka.views.index %}">Библиотека</a></p>
+		</div>
 		</div>
 </body>
 </html>

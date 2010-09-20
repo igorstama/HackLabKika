@@ -1,0 +1,17 @@
+{% extends "account/base.html" %}
+
+{% block extrahead %}
+{% endblock %}
+
+
+
+{% block page_title %}Одјава{% endblock %}
+
+{% block heading %}Одјава{% endblock %}
+
+{% block content %}
+<div class="main">
+	<p><a href="{% url mainpage %}">КИКА</a> успешно ве одјави.</p>
+	<p><a href="{% url hacklab.biblioteka.views.index %}">Вратете се на библиотеката овде.</a></p>
+</div>
+{% endblock %}

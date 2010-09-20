@@ -1,0 +1,74 @@
+{% extends 'biblioteka/base.html' %}
+
+{% block title %}Библиотека | Сите книги{% endblock %}
+{% block extrahead %}
+{% endblock %}
+
+{% block heading %}{{ heading }}{% endblock %}
+
+{% block content %}
+<div class="main">
+	<div class="link_bar">
+		<h3>Филтри</h3>
+		<form action="." method="post">{% csrf_token %}
+		<span>ISBN</span>
+		<input type="text" name="ISBN" />
+		</form>
+	</div>
+	<div class="lista">
+	<table>
+	<thead>
+	<tr><th>Слика</th><th>Податоци</th><th>Резервирана</th><th>Откажи ја резервацијата</th><th>Изнајми</th></tr>
+	</thead>
+	<tbody>
+	{% for res in reservations %}
+		<tr {% ifequal res.book.in_stock 0 %}class="i"{% endifequal %}>
+		<td><img src="{% if res.book.external_image_url %}{{ res.book.external_image_url }}{% else %}{{ res.book.image }}{% endif %}" height="50" /></td>
+		<td class="title">
+			{{ res.book.ISBN }}
+			<a href="{% url hacklab.biblioteka.views.view_book_details res.book.id %}" title="детали за книгата" class="title">{{ res.book.title }}</a>
+			од
+			{% for author in res.book.authors.all %}
+			<a href="{% url hacklab.biblioteka.views.by_author author.id %}" title="класа">{{ author }}</a>
+			{% endfor %}
+			 - 
+			 <a href="{% url hacklab.biblioteka.views.by_publisher res.book.publisher.id %}" title="година на издавање">{{ res.book.publisher }}</a>
+			, 
+			<a href="{% url hacklab.biblioteka.views.by_year res.book.release_year %}" title="година на издавање">{{ res.book.release_year }}</a>
+		</td>
+		<td class="ca">
+			од
+			<b>{{ res.reserved_by.get_full_name }}</b>
+			на
+			<b>{{ res.reserved_on|date:"d N Y" }}</b>
+			во
+			<b>{{ res.reserved_on|date:"H:m" }}h</b>
+		</td>
+		<td class="ca">
+			<form method="post" action="{% url hacklab.biblioteka.views.index %}cart/remove/">{% csrf_token %}
+				<input type="image" name="reservation" value="{{ res.id }}" src="{{ MEDIA_URL }}img/delete.png" />
+			</form>
+		</td>
+
+		<td class="ca">
+			{% if perms.can_add_rental %}
+				{% ifequal res.book.in_stock 0 %}
+				<img src="{{ MEDIA_URL }}img/nok.png" alt="Нема преостанати копии во библиотеката">
+				{% else %}
+				<form action="{% url hacklab.biblioteka.views.rent_book res.book.id %}" method="get">{% csrf_token %}
+					<input type="image" name="kniga" value="{{ res.id }}" src="{{ MEDIA_URL }}img/ok.png" />
+				</form>
+				{% endifequal %}
+			{% endif %}
+		</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+	</table>
+	</div>
+	<div class="clear"></div>
+	<div class="book_details">
+	<p>Книгите напишани со <i>italic</i> се изнајмени и нема преостанати копии.</p>
+	</div>
+</div>
+{% endblock %}

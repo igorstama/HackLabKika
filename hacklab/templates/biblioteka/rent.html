@@ -1,0 +1,24 @@
+{% extends 'biblioteka/base.html' %}
+
+{% block title %}Изнајмување на книга{% endblock %}
+{% block extrahead %}
+{% endblock %}
+
+{% block heading %}{{ heading }}{% endblock %}
+
+{% block content %}
+	<div class="form">
+		<form method="post">
+			{% csrf_token %}
+			{% for field in form %}
+			<div class="form_field">
+				{{ field.errors }}
+				{{ field.label_tag }} {{ field }}
+				<p>{{ field.help_text }}</p>
+			</div>
+			{% endfor %}
+			<p> <input type="submit" class="button" name="rent_book" value="Изнајми ја книгата" /> &nbsp;&nbsp;&nbsp;
+			<a href="{% url hacklab.biblioteka.views.index %}" class="button">Откажи</a>
+		</form>
+	</div>
+{% endblock %}
