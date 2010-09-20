@@ -5,10 +5,11 @@ from django.template import RequestContext
 from django.contrib.auth.models import User
 from hacklab.registration.forms import RegistrationForm, EditAccountForm
 from hacklab.registration.models import RegistrationProfile
+from django.core.urlresolvers import reverse
 
 
 
-def register(request, success_url='/registration/success/'):
+def register(request):#, success_url=reverse('registrationsuccess')):
 	"""
 	Allows a new user to register an account.
 
@@ -21,11 +22,10 @@ def register(request, success_url='/registration/success/'):
 																		email=form.cleaned_data['email'],
 																		name=form.cleaned_data['first_name'],
 																		surname=form.cleaned_data['last_name'])
-			return HttpResponseRedirect(success_url)
+			return HttpResponseRedirect(reverse('registrationsuccess'))
 	else:
 		form = RegistrationForm()
-	return render_to_response(request, 'registration/registration_form.html',
-							  { 'form': form })
+	return render_to_response(request, 'registration/registration_form.html', {'form': form })
 
 
 

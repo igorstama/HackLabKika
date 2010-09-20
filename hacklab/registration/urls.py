@@ -5,5 +5,5 @@ from django.contrib.auth.views import login, logout, password_change, password_c
 
 urlpatterns = patterns('hacklab.registration.views',
 	(r'^/$', 'register'),
-	(r'^/success/$', direct_to_template, {'template': 'registration/registration_complete.html'}),
+	url(r'^/success/$', direct_to_template, {'template': 'registration/registration_complete.html'}, name='registrationsuccess'),
 )
