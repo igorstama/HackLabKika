@@ -11,7 +11,8 @@
 {% endif %}
 
 <div class="form">
-<form method="post" action="">
+	<form method="post" action="">
+		{% csrf_token %}
 <div class="form_field">
 <label for="id_first_name">Име:</label>{% if form.first_name.errors %} <span class="error">{{ form.first_name.errors|join:", " }}</span>{% endif %}
 {{ form.first_name }}
