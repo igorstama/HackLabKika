@@ -24,9 +24,9 @@
 			{% for author in kniga.authors.all %}
 			<a href="{% url hacklab.biblioteka.views.by_author author.id %}" title="класа">{{ author }}</a>
 			{% endfor %}
-			 - 
+			 -
 			 <a href="{% url hacklab.biblioteka.views.by_publisher kniga.publisher.id %}" title="година на издавање">{{ kniga.publisher }}</a>
-			, 
+			,
 			<a href="{% url hacklab.biblioteka.views.by_year kniga.release_year %}" title="година на издавање">{{ kniga.release_year }}</a>
 		</td>
 		<td class="ca">

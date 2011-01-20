@@ -137,7 +137,7 @@ class Rental(models.Model):
 	rented_on = models.DateTimeField(auto_now_add=True)
 	rented_by = models.ForeignKey(User)
 	returned_on = models.DateTimeField(null=True)
-	
+
 	objects = models.Manager()
 	active_objects = ActiveRentalManager()
 
