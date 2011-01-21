@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding=utf-8 -*-
 
 from django.db import models
@@ -155,7 +156,7 @@ class ActiveReservationManager(models.Manager):
 	def get_reservation(self, user, book):
 		"""
 		Method that checks for a given reservation.
-		If it exists the reservation is returned,
+		If exists the reservation is returned,
 		else None is returned
 		"""
 		try:
