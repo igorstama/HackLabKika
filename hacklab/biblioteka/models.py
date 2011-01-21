@@ -41,18 +41,18 @@ class RentalExists(Exception):
 
 class Book(models.Model):
 	ISBN = models.CharField(max_length=30)
-	title = models.CharField(max_length=250)
-	release_year = models.IntegerField(null=True, blank=True)
-	lang = models.ForeignKey(Language, null=True, blank=True)
-	publisher = models.ForeignKey(Publisher, null=True, blank=True)
-	tags = models.CharField(max_length=300, null=True, blank=True)
-	authors = models.ManyToManyField(Author)
-	description = models.CharField(max_length=500, null=True)
-	image = models.ImageField(upload_to=settings.MEDIA_ROOT+'uploads/', null=True, blank=True)
-	external_image_url = models.URLField(null=True, blank=True)
-	quantity = models.IntegerField(default=1)
-	in_stock = models.IntegerField(default=1)
-	donated_by = models.CharField(max_length=128, null=True, blank=True)
+	title = models.CharField("Наслов", max_length=250, help_text="Наслов на книгата")
+	release_year = models.IntegerField("Година", null=True, blank=True, help_text="Година на издавање")
+	lang = models.ForeignKey(Language, null=True, blank=True, help_text="Јазик")
+	publisher = models.ForeignKey(Publisher, null=True, blank=True, help_text="Издавач на книгата")
+	tags = models.CharField("Тагови", max_length=300, null=True, blank=True, help_text="Сепаратор=запирка(,)")
+	authors = models.ManyToManyField(Author, help_text="Авотри на книгата")
+	description = models.CharField("Опис", max_length=500, null=True, help_text="краток опис на книгата")
+	image = models.ImageField("Слика", upload_to=settings.MEDIA_ROOT+'uploads/', null=True, blank=True, help_text="")
+	external_image_url = models.URLField("Надворешна слика", null=True, blank=True, help_text="Слика која ќе се чува на серверот")
+	quantity = models.IntegerField("Количина", default=1, help_text="Вкупна количина на книги")
+	in_stock = models.IntegerField("Преостанати копии", default=1, help_text="Колку вкупно копии има преостанато во библиотеката")
+	donated_by = models.CharField("Донирана од", max_length=128, null=True, blank=True, help_text="Од кого е донирана книгата")
 
 	def __unicode__(self):
 		return self.title
