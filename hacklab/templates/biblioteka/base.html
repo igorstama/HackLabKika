@@ -9,7 +9,7 @@
 	{% if user.is_authenticated %}
 		<div class="submenu">
 			<a href="{% url hacklab.biblioteka.views.index %}">Почеток</a>
-			<a href="{% url hacklab.biblioteka.views.cart %}">Мои резервирани книги</a>
+			<a href="{% url hacklab.biblioteka.views.reserved_books %}">Мои резервирани книги</a>
 			<a href="{% url hacklab.biblioteka.views.my_history %}">Мои изнајмени книги</a>
 		{% if perms.biblioteka.can_add_rental %}
 

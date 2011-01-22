@@ -45,7 +45,7 @@
 			<b>{{ res.reserved_on|date:"H:m" }}h</b>
 		</td>
 		<td class="ca">
-			<form method="post" action="{% url hacklab.biblioteka.views.index %}cart/remove/">{% csrf_token %}
+			<form method="post" action="{% url hacklab.biblioteka.views.index %}reservations/remove/">{% csrf_token %}
 				<input type="image" name="reservation" value="{{ res.id }}" src="{{ MEDIA_URL }}img/delete.png" />
 			</form>
 		</td>

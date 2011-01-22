@@ -77,37 +77,6 @@ def by_publisher(request, p_id):
             {'knigi':publisher.book_set.all(), 'heading':u'Листа на сите книги од \"'+publisher.name+'\"'})
 
 
-@permission_required('biblioteka.can_add_rental', login_url=settings.LOGIN_URL)
-def reserved_books(request):
-    """
-    Metod za listanje na site rezervirani knigi.
-    Potrebna e permisija za dodavanje na rental.
-    """
-    reservations = Reservation.objects.filter(active=True)
-    if request.method == 'POST':
-        try:
-            reservations = reservations.filter(book__ISBN=request.POST['ISBN'])
-        except:
-            pass
-
-    return render_to_response(request, 'biblioteka/res_list.html',
-            {'reservations':reservations, 'heading':'Листа на сите резервирани книги'})
-
-
-@login_required
-def reserve_book(request):
-    """
-    Metod za rezerviranje na kniga od user-ot koj go pravi requestot.
-    """
-    if request.method == 'POST':
-        try:
-            kniga = get_object_or_404(Book, pk=request.POST['kniga'])
-            kniga.reserve_to(request.user)
-        except ReservationExists:
-            pass
-    return HttpResponseRedirect(reverse('hacklab.biblioteka.views.cart'))
-
-
 @login_required
 @permission_required('biblioteka.can_add_rental', login_url=settings.LOGIN_URL)
 def rent_book(request, k_id):
@@ -123,7 +92,7 @@ def rent_book(request, k_id):
             if form.is_valid():
                 # korisnikot na koj mu se iznajmuva knigata
                 user = form.cleaned_data['user']
-                kniga.rent_to(user)
+                Rental.active_objects.rent_book(user, kniga)
                 return HttpResponseRedirect(reverse('hacklab.biblioteka.views.index'))
         else:
             h = u'Изнајмувањето неможе да се изведе бидејќи нема преостанати копии.'
@@ -156,7 +125,7 @@ def return_book(request, k_id):
         form = RentalForm(request.POST)
         if form.is_valid():
             user = form.cleaned_data['user']
-            kniga.return_by(user)
+            Rental.active_objects.return_book(user, kniga)
     else:
         form = RentalForm()
         qs = User.objects.filter(rental__book=kniga, rental__returned_on=None)
@@ -168,29 +137,42 @@ def return_book(request, k_id):
     return HttpResponseRedirect(reverse('hacklab.biblioteka.views.index'))
 
 
-
+# @permission_required('biblioteka.can_add_rental', login_url=settings.LOGIN_URL)
 @login_required
-def cart(request):
-    wishlist = Reservation.objects.filter(active=True, reserved_by=request.user)
-    return render_to_response(request, 'biblioteka/wishlist.html', {'reservations':wishlist,
-                                'heading':u'Листа на сите резервирани книги'})
-
-
-
-@login_required
-def remove_from_cart(request):
-    # request.session.__delitem__('wishlist')
+def reserved_books(request):
+    """
+    Metod za listanje na site rezervirani knigi.
+    Potrebna e permisija za dodavanje na rental.
+    """
+    reservations = Reservation.objects.all()
     if request.method == 'POST':
         try:
-            reservation = get_object_or_404(Reservation, pk=request.POST['reservation'])
-            reservation.delete()
-            # reservation.save()
-        except Exception, exc:
-            # ova stoi ovde za debug,
-            # koga ke se pravi deployment treba da se trgne dolnava linija
-            # i da se dodade custom 500 (server error) handler
-            print "EXCEPTION ======== %s" % exc
-    return HttpResponseRedirect(reverse('hacklab.biblioteka.views.cart'))
+            reservations = reservations.filter(book__ISBN=request.POST['ISBN'])
+        except:
+            pass
+    return render_to_response(request, 'biblioteka/res_list.html',
+            {'reservations':reservations, 'heading':'Листа на сите резервирани книги'})
+
+@login_required
+def reserve_book(request):
+    """
+    Metod za rezerviranje na kniga od user-ot koj go pravi requestot.
+    """
+    if request.method == 'POST':
+        try:
+            kniga = get_object_or_404(Book, pk=request.POST['kniga'])
+            Reservation.objects.create(reserved_by=request.user, book=kniga)
+        except ReservationExists:
+            # za ovde treba da se napravi template vo koj ke stoi deka knigata e rezervirana
+            pass
+    return HttpResponseRedirect(reverse('hacklab.biblioteka.views.reserved_books'))
+
+@login_required
+def remove_reservation(request):
+    # request.session.__delitem__('wishlist')
+    if request.method == 'POST':
+        r = Reservation.objects.remove_reservation(request.POST['reservation'])
+    return HttpResponseRedirect(reverse('hacklab.biblioteka.views.reserved_books'))
 
 
 def get_rental_list(user=None, year=None, month=None, ISBN=None):
@@ -207,7 +189,7 @@ def get_rental_list(user=None, year=None, month=None, ISBN=None):
     return rental_list.order_by('-rented_on')
 
 
-@login_required
+@permission_required('biblioteka.can_add_rental', login_url=settings.LOGIN_URL)
 def history(request, rented_by=None, year=None, month=None):
     dates = Rental.objects.dates('rented_on', 'month')
     isbn = None
