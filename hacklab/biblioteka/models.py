@@ -8,22 +8,22 @@ from datetime import datetime
 
 
 class Language(models.Model):
-	name = models.CharField(max_length=20)
-	iso_name = models.CharField(max_length=5)
+	name = models.CharField("Назив", max_length=20)
+	iso_name = models.CharField("ISO-2 Кратенка", max_length=5)
 
 	def __unicode__(self):
 		return self.iso_name
 
 
 class Author(models.Model):
-	name = models.CharField(max_length=150)
+	name = models.CharField("Назив", max_length=150, help_text="Име и презиме на авторот")
 
 	def __unicode__(self):
 		return self.name
 
 
 class Publisher(models.Model):
-	name = models.CharField(max_length=30)
+	name = models.CharField("Назив", max_length=30, help_text="Назив на издавачот")
 
 	def __unicode__(self):
 		return self.name
