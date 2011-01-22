@@ -328,7 +328,7 @@ div.book_details p a, div.user_details p a {
 }
 div.book_details p b, div.user_details p b{
 	color:#855825;
-	width:100px;
+	width:200px;
 	display:block;
 	float:left;
 }

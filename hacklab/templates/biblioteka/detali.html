@@ -19,6 +19,7 @@
 		</p>
 		<p><b>Издавач</b> <a href="{% url hacklab.biblioteka.views.by_publisher kniga.publisher.id %}" title="година на издавање">{{ kniga.publisher }}</a></p>
 		<p><b>Година</b> <a href="{% url hacklab.biblioteka.views.by_year kniga.release_year %}" title="година на издавање">{{ kniga.release_year }}</a></p>
+		<p><b>Краток опис</b>{{ kniga.description }}</p>
         {% if tags %}<p><b>Тагови</b> {% for t in tags %}<a href="{% url hacklab.biblioteka.views.by_tag t %}">{{ t }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
 		<p><b>Преостанати копии</b> {{ kniga.in_stock }}</p>
 
